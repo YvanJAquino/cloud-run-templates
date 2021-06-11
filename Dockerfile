@@ -1,9 +1,12 @@
 FROM    python:3.9.5-buster
-EXPOSE  8080
-ENV     PIPENV_VENV_IN_PROJECT=true
+ENV     PORT 8080
+ENV     PIPENV_VENV_IN_PROJECT True
+ENV     PYTHONUNBUFFERED True
 WORKDIR /src
+COPY    app.py Pipfile Pipfile.lock ./
 RUN     apt update && \
-        pip install pipenv
-COPY    app.py
-RUN     pipenv sync
-CMD     exec pipenv run gunicorn --bind 0.0.0.0:8080 cr-app-users:app
+        apt install -y gunicorn3 && \
+        pip install pipenv && \
+
+        pipenv sync
+CMD     exec pipenv run gunicorn --bind 0.0.0.0:8080 app:app
